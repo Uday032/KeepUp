@@ -9,6 +9,8 @@ import {
 import {Container} from 'react-bootstrap'
 
 import Index from './pages/Index'
+import Follow from './pages/Follow'
+import GetArticle from './pages/GetArticles'
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Router>
           <Switch>
             <Route path="/" exact component={Index}/>
+            <Route path="/follow" exact component={Follow}/>
+            <Route path="/getarticles" component={GetArticle}/>
           </Switch>
         </Router>
       </Container>

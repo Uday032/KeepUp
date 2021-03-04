@@ -4,8 +4,8 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, APIView
 from rest_framework.response import Response
-from .models import Userid, PublisherId, AuthorId
-from .serializers import UserSerializer, PublisherSerializer, Authorerializer
+from .models import Userid, PublisherId, AuthorId, FollowAuthor, FollowPublisher
+from .serializers import UserSerializer, PublisherSerializer, AuthorSerializer, FollowAuthorSerializer, FollowPublisherSerializer
 
 # Create your views here.
 class UserSet(APIView):
@@ -43,4 +43,62 @@ class PublisherSet(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response({'error': 'Error saving the Publisher'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error': 'Publisher ID Already Added'})
+
+class AuthorSet(APIView):
+
+    def get(self, request, format=None):
+        author = AuthorId.objects.all()
+        serializer = AuthorSerializer(author, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        user = AuthorId.objects.filter(userid= request.data['userid'])
+        serializeruser = AuthorSerializer(user, many=True)
+        if(len(serializeruser.data)==0):
+            serializer = AuthorSerializer(data=request.data)
+            if(serializer.is_valid()):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'error': 'Error saving the Author'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Author ID Already Added'})
+
+class AuthorFollowSet(APIView):
+
+    def get(self, request, format=None):
+        author = FollowAuthor.objects.all()
+        serializer = FollowAuthorSerializer(author, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        user = FollowAuthor.objects.filter(followerid= request.data['followerid'], followingid= request.data['followingid'])
+        serializeruser = FollowAuthorSerializer(user, many=True)
+        if(len(serializeruser.data)==0):
+            serializer = FollowAuthorSerializer(data=request.data)
+            if(serializer.is_valid()):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'error': 'Error adding to databse'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'User has already followed the author'})
+
+
+class PublisherFollowSet(APIView):
+
+    def get(self, request, format=None):
+        publisher = FollowPublisher.objects.all()
+        serializer = FollowPublisherSerializer(publisher, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        user = FollowPublisher.objects.filter(followerid= request.data['followerid'], followingid= request.data['followingid'])
+        serializeruser = FollowPublisherSerializer(user, many=True)
+        if(len(serializeruser.data)==0):
+            serializer = FollowPublisherSerializer(data=request.data)
+            if(serializer.is_valid()):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'error': 'Error adding to databse'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'User has already followed the Publisher'})
+
+
+
 

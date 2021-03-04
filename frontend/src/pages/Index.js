@@ -6,6 +6,10 @@ import {
     Link
 } from "react-router-dom";
 
+
+//axios
+import instance from '../axios'
+
 export default class index extends Component {
     constructor(){
         super();
@@ -22,30 +26,94 @@ export default class index extends Component {
         this.handleAddAuthor = this.handleAddAuthor.bind(this);
 
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
 
         this.state = {
             usershow: 0,
             publishershow: 0,
             authorshow: 0,
-            inputtext: ''
+            inputtext: '',
+            success: '',
+            error: '',
+            selectedpublisher: ''
         }
     }
 
     handleAddUser(e) {
-
+        e.preventDefault();
+        const data = {
+            'userid': this.state.inputtext
+        }
+        instance.post('/core/users/', data)
+            .then((res) => {
+                console.log(res);
+                if(res.data.error) {
+                    this.setState({
+                        error: res.data.error,
+                        success: ''
+                    })
+                } else {
+                    this.setState({
+                        error: '',
+                        success: 'User Added'
+                    })
+                }
+            })
     }
 
     handleAddPublisher(e) {
-
+        e.preventDefault();
+        const data = {
+            'userid': this.state.inputtext
+        }
+        instance.post('/core/publisher/', data)
+            .then((res) => {
+                console.log(res);
+                if (res.data.error) {
+                    this.setState({
+                        error: res.data.error,
+                        success: ''
+                    })
+                } else {
+                    this.setState({
+                        error: '',
+                        success: 'Publisher Added'
+                    })
+                }
+            })
     }
 
     handleAddAuthor(e) {
-
+        e.preventDefault();
+        const data = {
+            'userid': this.state.inputtext
+        }
+        if (this.state.selectedpublisher.value !== null) {
+            data['publisher'] = this.state.selectedpublisher.value
+        }
+        instance.post('/core/author/', data)
+            .then((res) => {
+                console.log(res);
+                if (res.data.error) {
+                    this.setState({
+                        error: res.data.error,
+                        success: ''
+                    })
+                } else {
+                    this.setState({
+                        error: '',
+                        success: 'Author Added'
+                    })
+                }
+            })
     }
 
     handleUserShow(e) {
         this.setState({
-            usershow: 1
+            usershow: 1,
+            success: '',
+            error: '',
+            inputtext: ''
         })
     }
 
@@ -57,7 +125,10 @@ export default class index extends Component {
 
     handlePublisherShow(e) {
         this.setState({
-            publishershow: 1
+            publishershow: 1,
+            success: '',
+            error: '',
+            inputtext: ''
         })
     }
 
@@ -69,7 +140,10 @@ export default class index extends Component {
 
     handleAuthorShow(e) {
         this.setState({
-            publishershow: 1
+            authorshow: 1,
+            success: '',
+            error: '',
+            inputtext: ''
         })
     }
 
@@ -85,6 +159,13 @@ export default class index extends Component {
         })
     }
 
+    handleSelectChange = selectedpublisher => {
+        this.setState({
+            selectedpublisher
+        })
+        console.log(selectedpublisher);
+    }
+
     render() {
         return (
             <div>
@@ -95,28 +176,39 @@ export default class index extends Component {
                 <DynamicModel 
                     show = {this.state.usershow}
                     handleClose = {this.handleUserClose}
+                    modelid = "User"
                     text = "Add User"
                     handleInputChange= {this.handleInputChange}
                     value = {this.state.inputtext}
                     handlesubmit = {this.handleAddUser}
+                    success = {this.state.success}
+                    error= {this.state.error}
                 />
 
                 <DynamicModel 
                     show = {this.state.publishershow}
                     handleClose = {this.handlePublisherClose}
+                    modelid = "Publisher"
                     text = "Add Publisher"
                     handleInputChange= {this.handleInputChange}
                     value = {this.state.inputtext}   
                     handlesubmit = {this.handleAddPublisher} 
+                    success = {this.state.success}
+                    error= {this.state.error}
                 />
 
                 <DynamicModel 
                     show = {this.state.authorshow}
                     handleClose = {this.handleAuthorClose}
+                    modelid = "Author"
                     text = "Add Author"
                     handleInputChange= {this.handleInputChange}
                     value = {this.state.inputtext}
                     handlesubmit= {this.handleAddAuthor}
+                    success = {this.state.success}
+                    error= {this.state.error}
+                    selected= {this.state.selectedpublisher}
+                    handleChange = {this.handleSelectChange}
                 />
 
                 <div className="mt-4">

@@ -1,8 +1,58 @@
 import React, { Component } from 'react'
 import {Button, Modal, Form} from 'react-bootstrap'
+import ReactSelect from './ReactSelect'
+
+//axios
+import instance from '../axios'
 
 export default class DynamicModel extends Component {
+
+    constructor() {
+        super();
+        
+        this.state = {
+            publishers: []
+        }
+    }
+
+    componentDidMount() {
+        instance.get('/core/publisher/')
+            .then((res) => {
+                
+                this.setState({
+                    publishers: res.data.map((publisher) => {
+                        return ({
+                            'value': publisher.id,
+                            'label': publisher.userid
+                        })
+                    })
+                })
+
+                this.setState({
+                    publishers: this.state.publishers.concat({
+                        value: null,
+                        label: "None"
+                    })
+                })
+            })
+    }
+
     render() {
+            let Select;
+            if (this.props.modelid==='Author') {
+                console.log("authoe");
+                Select = <ReactSelect
+                    selectedOption = {
+                        this.props.selected
+                    }
+                    handleChange = {
+                        this.props.handleChange
+                    }
+                    options = {
+                        this.state.publishers
+                    }
+                />
+            }
         return (
             <Modal show={this.props.show} onHide={this.props.handleClose}>
                 <Modal.Header closeButton>
@@ -11,15 +61,28 @@ export default class DynamicModel extends Component {
                 <Form>
                     <Modal.Body>
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Label>User Id</Form.Label>
+                            <Form.Label>{this.props.modelid} Id</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                placeholder="Enter User id" 
+                                placeholder = "Enter id"
                                 onChange={this.props.handleInputChange}
                                 value= {this.props.value}
                             
                             />
                         </Form.Group>
+
+                        <Form.Group>
+                            <p>Select Publisher: </p>
+                            {
+                                Select
+                            }
+                        </Form.Group>
+                        <div>
+                            <span className="text-success">{this.props.success}</span>
+                        </div>
+                        <div>
+                            <span className="text-danger">{this.props.error}</span>
+                        </div>
                     </Modal.Body>
                     <Modal.Footer>
                     <Button variant="secondary" onClick={this.props.handleClose}>
