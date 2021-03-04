@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Userid, PublisherId, AuthorId
+from .models import Userid, PublisherId, AuthorId, FollowAuthor, FollowPublisher
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,7 +11,19 @@ class PublisherSerializer(serializers.ModelSerializer):
         model = PublisherId
         fields = '__all__'
 
-class Authorerializer(serializers.ModelSerializer):
+class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = AuthorId
         fields = '__all__'
+
+class FollowAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowAuthor
+        fields = '__all__'
+
+class FollowPublisherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowPublisher
+        fields = '__all__'
+
+        

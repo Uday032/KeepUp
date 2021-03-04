@@ -9,7 +9,7 @@ class PublisherId(models.Model):
 
 class AuthorId(models.Model):
     userid = models.CharField(max_length=50, unique=True)
-    publisher = models.ForeignKey(PublisherId, on_delete=models.CASCADE)
+    publisher = models.ForeignKey(PublisherId, on_delete=models.CASCADE, blank=True, null=True)
 
 class FollowPublisher(models.Model):
     followerid = models.ForeignKey(Userid, on_delete=models.CASCADE)
