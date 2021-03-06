@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.db.models import Q
 
 from rest_framework import status
 from rest_framework.decorators import api_view, APIView, action
@@ -135,7 +136,15 @@ def publisher(request, publisherid):
 
 @api_view(['GET'])
 def getfollowedarticles(request, userid):
-    
-    return Response({"Hello world"})
+
+    followed_publisher = FollowPublisher.objects.filter(followerid=userid).values_list('followingid', flat=True)
+
+    followedauthor = FollowAuthor.objects.filter(followerid=userid).values_list('followingid', flat=True)
+
+    data = []
+
+    articles = Articles.objects.filter(Q(Postedbyauthor__in=list(followedauthor)) | Q(Postedbypublisher__in=list(followed_publisher)))
+    serializer = ArticleSerializer(articles, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 

@@ -45,12 +45,15 @@ export default class GetAuthors extends Component {
             .then((res)=>{
                 if(res.data.length===0){
                     this.setState({
-                        error: 'No Authors'
+                        error: 'No Authors',
+                        authors: []
+                    })
+                } else {
+                    this.setState({
+                        authors: res.data,
+                        error: ''
                     })
                 }
-                this.setState({
-                    authors: res.data
-                })
             })
         
     }
