@@ -11,7 +11,8 @@ export default class DynamicModel extends Component {
         super();
         
         this.state = {
-            publishers: []
+            publishers: [],
+            showpublishers: 0
         }
     }
 
@@ -39,8 +40,7 @@ export default class DynamicModel extends Component {
 
     render() {
             let Select;
-            if (this.props.modelid==='Author') {
-                console.log("authoe");
+            if (this.props.modelid==="Author") {
                 Select = <ReactSelect
                     selectedOption = {
                         this.props.selected
@@ -72,7 +72,9 @@ export default class DynamicModel extends Component {
                         </Form.Group>
 
                         <Form.Group>
-                            <p>Select Publisher: </p>
+                            <div style={{display: (this.props.modelid==="Author") ? "block" : "none"}}>
+                                <p>Select Publisher: </p>
+                            </div>
                             {
                                 Select
                             }

@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 class Userid(models.Model):
@@ -18,3 +19,10 @@ class FollowPublisher(models.Model):
 class FollowAuthor(models.Model):
     followerid = models.ForeignKey(Userid, on_delete=models.CASCADE)
     followingid = models.ForeignKey(AuthorId, on_delete=models.CASCADE)
+
+
+class Articles(models.Model):
+    ArticleTitle = models.CharField(max_length=220)
+    Postedbypublisher = models.ForeignKey(PublisherId, on_delete=models.CASCADE, blank=True, null=True)
+    Postedbyauthor = models.ForeignKey(AuthorId, on_delete=models.CASCADE, blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
