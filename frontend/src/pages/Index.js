@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import {Button} from 'react-bootstrap'
 import DynamicModel from '../components/DynamicModel'
+import AddArticleModel from '../components/AddArticleModel'
 
 import {
     Link
@@ -20,23 +21,143 @@ export default class index extends Component {
         this.handlePublisherClose = this.handlePublisherClose.bind(this);
         this.handleAuthorShow = this.handleAuthorShow.bind(this);
         this.handleAuthorClose = this.handleAuthorClose.bind(this);
+        this.handlePublisherArticleShow = this.handlePublisherArticleShow.bind(this);
+        this.handleAuthorArticleShow = this.handleAuthorArticleShow.bind(this);
+        this.handlePublisherArticleClose = this.handlePublisherArticleClose.bind(this);
+        this.handleAuthorArticleClose = this.handleAuthorArticleClose.bind(this);
 
         this.handleAddUser = this.handleAddUser.bind(this);
         this.handleAddPublisher = this.handleAddPublisher.bind(this);
         this.handleAddAuthor = this.handleAddAuthor.bind(this);
+        this.handlePublisherArticleSubmit = this.handlePublisherArticleSubmit.bind(this);
+        this.handleAuthorArticleSubmit = this.handleAuthorArticleSubmit.bind(this);
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSelectChange = this.handleSelectChange.bind(this);
+        this.handleArticleAuthorChange = this.handleArticleAuthorChange.bind(this);
+        this.handleArticlePublisherChange = this.handleArticlePublisherChange.bind(this);
 
         this.state = {
             usershow: 0,
             publishershow: 0,
             authorshow: 0,
+            publisherarticleshow: 0,
+            authorarticleshow: 0,
             inputtext: '',
             success: '',
             error: '',
-            selectedpublisher: ''
+            selectedpublisher: '',
+            publishers: [],
+            authors: [],
+            selectedarticleauthor: '',
+            selectedarticlepublisher: ''
         }
+    }
+
+    handleArticleAuthorChange = selectedarticleauthor => {
+        this.setState({
+            selectedarticleauthor
+        })
+    }
+
+    handleArticlePublisherChange = selectedarticlepublisher => {
+        this.setState({
+            selectedarticlepublisher
+        })
+    }
+
+    handlePublisherArticleShow(e) {
+        instance.get('/core/publisher/')
+            .then((res) => {
+
+                this.setState({
+                    publishers: res.data.map((publisher) => {
+                        return ({
+                            'value': publisher.id,
+                            'label': publisher.userid
+                        })
+                    })
+                })
+            })
+        this.setState({
+            publisherarticleshow: 1
+        })
+    }
+
+    handlePublisherArticleClose(e) {
+        this.setState({
+            publisherarticleshow: 0
+        })
+    }
+
+    handleAuthorArticleShow(e) {
+        instance.get('/core/author/')
+            .then((res) => {
+
+                this.setState({
+                    authors: res.data.map((author) => {
+                        return ({
+                            'value': author.id,
+                            'label': author.userid
+                        })
+                    })
+                })
+            })
+        this.setState({
+            authorarticleshow: 1
+        })
+    }
+
+    handleAuthorArticleClose(e){
+        this.setState({
+            authorarticleshow: 0
+        })
+    }
+
+    handlePublisherArticleSubmit(e) {
+        e.preventDefault();
+        const data = {
+            'ArticleTitle': this.state.inputtext,
+            'Postedbypublisher': this.state.selectedarticlepublisher.value
+        }
+
+        instance.post('/core/articles/', data)
+            .then((res) => {
+                if(res.data.error) {
+                    this.setState({
+                        error: res.data.error,
+                        success: ''
+                    })
+                } else {
+                    this.setState({
+                        error: '',
+                        success: 'Article Added'
+                    })
+                }
+            })
+    }
+
+    handleAuthorArticleSubmit(e) {
+        e.preventDefault();
+        const data = {
+            'ArticleTitle': this.state.inputtext,
+            'Postedbyauthor': this.state.selectedarticleauthor.value
+        }
+
+        instance.post('/core/articles/', data)
+            .then((res) => {
+                if (res.data.error) {
+                    this.setState({
+                        error: res.data.error,
+                        success: ''
+                    })
+                } else {
+                    this.setState({
+                        error: '',
+                        success: 'Article Added'
+                    })
+                }
+            })
     }
 
     handleAddUser(e) {
@@ -163,7 +284,6 @@ export default class index extends Component {
         this.setState({
             selectedpublisher
         })
-        console.log(selectedpublisher);
     }
 
     render() {
@@ -172,6 +292,8 @@ export default class index extends Component {
                 <Button variant="primary" onClick={this.handleUserShow}>Add User</Button>{' '}
                 <Button variant="success" onClick={this.handlePublisherShow}>Add Publisher</Button>{' '}
                 <Button variant="dark" onClick={this.handleAuthorShow}>Add Author</Button>{' '}
+                <Button variant="warning" onClick={this.handlePublisherArticleShow}>Add Publishers Article</Button>{' '}
+                <Button variant="info" onClick={this.handleAuthorArticleShow}>Add Author Article</Button>{' '}
 
                 <DynamicModel 
                     show = {this.state.usershow}
@@ -209,6 +331,34 @@ export default class index extends Component {
                     error= {this.state.error}
                     selected= {this.state.selectedpublisher}
                     handleChange = {this.handleSelectChange}
+                />
+                
+                <AddArticleModel
+                    show={this.state.publisherarticleshow}
+                    handleClose = {this.handlePublisherArticleClose}
+                    writer = "Publisher"
+                    handleInputChange= {this.handleInputChange}
+                    value = {this.state.inputtext}
+                    success = {this.state.success}
+                    error= {this.state.error}
+                    handlesubmit ={this.handlePublisherArticleSubmit}
+                    publishers= {this.state.publishers}
+                    selected= {this.state.selectedarticlepublisher}
+                    handleChange = {this.handleArticlePublisherChange}
+                />
+
+                <AddArticleModel
+                    show={this.state.authorarticleshow}
+                    handleClose = {this.handleAuthorArticleClose}
+                    writer = "Author"
+                    handleInputChange= {this.handleInputChange}
+                    value = {this.state.inputtext}
+                    success = {this.state.success}
+                    error= {this.state.error}
+                    handlesubmit ={this.handleAuthorArticleSubmit}
+                    publishers= {this.state.authors}
+                    selected= {this.state.selectedarticleauthor}
+                    handleChange = {this.handleArticleAuthorChange}
                 />
 
                 <div className="mt-4">
