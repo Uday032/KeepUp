@@ -115,11 +115,24 @@ class ArticleSet(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request, format=None):
-        serializer = ArticleSerializer(data=request.data)
-        if(serializer.is_valid()):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'error': 'Error saving the Author'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if(request.data['Postedbyauthor']!=None):
+                articles = Articles.objects.filter(Postedbyauthor=request.data['Postedbyauthor'])
+                serializer = ArticleSerializer(articles, many=True)
+                if(len(serializer.data)):
+                    return Response({'error': 'Author can only publish one article'})
+        except:
+            pass
+            
+        articles = Articles.objects.filter(ArticleTitle=request.data['ArticleTitle'])
+        serializertitle = ArticleSerializer(articles, many=True)
+        if(len(serializertitle.data)==0):
+            serializer = ArticleSerializer(data=request.data)
+            if(serializer.is_valid()):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'error': 'Error saving the Article'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'This article is already published'})
     
     
 @api_view(['GET'])
