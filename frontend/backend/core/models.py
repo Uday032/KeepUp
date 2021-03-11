@@ -22,7 +22,7 @@ class FollowAuthor(models.Model):
 
 
 class Articles(models.Model):
-    ArticleTitle = models.CharField(max_length=220)
+    ArticleTitle = models.CharField(max_length=220, unique = True)
     Postedbypublisher = models.ForeignKey(PublisherId, on_delete=models.CASCADE, blank=True, null=True)
     Postedbyauthor = models.ForeignKey(AuthorId, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
