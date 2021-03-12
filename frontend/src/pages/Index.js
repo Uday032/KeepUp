@@ -371,6 +371,9 @@ export default class index extends Component {
                     <div>
                         <Link to="/getauthors">Get Authors</Link>
                     </div>
+                    <div>
+                        <Link to="/getarticles/top">Get Top Articles</Link>
+                    </div>
                 </div>
             </div>
         )

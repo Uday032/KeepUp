@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (UserSet, PublisherSet, AuthorSet, AuthorFollowSet, 
                     PublisherFollowSet, GetAuthorsFromPublishersSet,
-                    ArticleSet, author, publisher, getfollowedarticles)
+                    ArticleSet, author, publisher, getfollowedarticles,
+                    gettoparticle)
 
 
 urlpatterns = [
@@ -14,5 +15,6 @@ urlpatterns = [
     path('articles/', ArticleSet.as_view()),
     path('getarticles/author/<int:authorid>', author),
     path('getarticles/publisher/<int:publisherid>', publisher),
-    path('getarticles/<int:userid>', getfollowedarticles)
+    path('getarticles/<int:userid>', getfollowedarticles),
+    path('getarticles/top', gettoparticle)
 ]
