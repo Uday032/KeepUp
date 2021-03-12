@@ -12,6 +12,7 @@ import Index from './pages/Index'
 import Follow from './pages/Follow'
 import GetArticle from './pages/GetArticles'
 import GetAuthors from './pages/GetAuthors'
+import TopArticles from './pages/TopArticles'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Switch>
             <Route path="/" exact component={Index}/>
             <Route path="/follow" exact component={Follow}/>
+            <Route path='/getarticles/top' exact component={TopArticles} />
             <Route path="/getarticles" component={GetArticle}/>
             <Route path="/getauthors" component={GetAuthors}/>
           </Switch>
